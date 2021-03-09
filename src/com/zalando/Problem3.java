@@ -6,14 +6,18 @@ package com.zalando;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Problem3 {
 
 	public static void main(String[] args) {
-		int[] A= {3,5,6,3,3,5};
+		int[] A= {3,5,6,3,3,5,6};
 		System.out.println("Pairs:"+countPairs(A));
-		System.out.println("Pairs2:"+countPairs2(A));
-
+//		System.out.println("Pairs2:"+countPairs2(A));
+		System.out.println("Pairs3:"+countPairs3(A));
+		
 	}
 // Solution 1
 	public static int countPairs(int[] A) {
@@ -39,11 +43,10 @@ public class Problem3 {
 		for (Map.Entry<Integer,Integer> m:temp.entrySet()) {
 			int tc = m.getValue();
 			ip =ip+ ((tc * (tc - 1))/2);
+			if(ip>1000000000) return 1000000000;
 		}
 		
-		
-		
-		return ip>1000000000?1000000000:ip;
+		return ip;
 	}
 	//Solution Trial
 	public static int countPairs2(int[] A) {
@@ -58,8 +61,6 @@ public class Problem3 {
 			if (!temp.containsKey(d)) {
 				temp.put(d, 1);
 			} else {
-				int t=temp.get(d)+1;
-				
 				temp.put(d, temp.get(d) + 1);
 			}
 		});
@@ -81,6 +82,25 @@ public class Problem3 {
 			return Math.toIntExact(ip);
 		}
 	}
+	
+	public static int countPairs3(int[] A) {
+		
+		Map<Integer, Long> occurrences =
+			    IntStream.of(A).boxed().collect(
+			        Collectors.groupingBy(Function.identity(), Collectors.counting()));
+			
+		System.out.println("occurrences:"+occurrences);
 
+		long count =
+			    occurrences.values().stream()
+			        .mapToLong(e -> e * (e - 1) / 2)
+			        .sum();
+			
+			return Math.toIntExact(count);
+	}
+	
+	public static long getLimit(long i) {
+		return i>4?4:i;
+	}
 
 }
